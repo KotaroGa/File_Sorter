@@ -1,0 +1,9 @@
+
+# File Sorter v0.1.0
+# No external dependencies for MVP!
+# Python 3.8+ standard library only
+
+# Future dependencies (commented out):
+# PySimpleGUI~=4.60  # For GUI version
+# watchdog~=3.0.0    # For folder monitoring
+# click~=8.1.0       # For advanced CLI

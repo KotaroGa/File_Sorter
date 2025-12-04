@@ -1,0 +1,57 @@
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+venv/
+env/
+.benv/
+.env
+.venv/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Test outputs
+.pytest_cache/
+.coverage
+htmlcov/
+config.json
+
+if ! grep -q "*.json" .gitignore; then
+    echo -e "\n# Auto-generated configs" >> .gitignore
+    echo "*.json" >> .gitignore
+    echo "✅ Added *.json to .gitignore"
+fi
+
+git add .gitignore
