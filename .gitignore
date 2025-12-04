@@ -46,3 +46,12 @@ logs/
 .pytest_cache/
 .coverage
 htmlcov/
+config.json
+
+if ! grep -q "*.json" .gitignore; then
+    echo -e "\n# Auto-generated configs" >> .gitignore
+    echo "*.json" >> .gitignore
+    echo "✅ Added *.json to .gitignore"
+fi
+
+git add .gitignore
