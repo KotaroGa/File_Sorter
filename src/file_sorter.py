@@ -7,7 +7,7 @@ Uses ConfigManager for configuration.
 import shutil
 import logging
 from pathlib import Path
-from typing import Dict, List, Optional, Set, Tuple
+from typing import Dict, List, Optional, Set, Tuple, Any
 from datetime import datetime
 
 from .config_manager import ConfigManager
@@ -268,7 +268,7 @@ class FileSorter:
         
         # Check if we should skip (for both dry_run and actual move)
         conflict_strategy = self.options.get("conflict_resolution", "append_number")
-        
+
         if conflict_strategy == "skip" and target_path.exists():
             self.logger.info(f"Skipping {source_path.name} (already exists at destination)")
             return (source_path, source_path)  # Same path means skip
@@ -278,3 +278,124 @@ class FileSorter:
         self.logger.info(f"{action}: {source_path.name} → {final_target_path.relative_to(source_path.parent.parent)}")
         
         return (source_path, final_target_path)
+
+
+
+    def sort_file(self, source_path: Path, dry_run: Optional[bool] = None) -> bool:
+        """
+        Sort a single file based on configuration.
+        
+        Args:
+            source_path: Path to the file to sort
+            dry_run: If True, only simulate. If None, uses config setting.
+            
+        Returns:
+            True if file was moved (or would be moved), False if skipped or error
+            
+        Note:
+            Uncategorized files are not moved (returns False)
+        """
+        # Use dry_run from config if not specified
+        if dry_run is None:
+            dry_run_value = self.options.get("dry_run", False)
+        else:
+            dry_run_value = dry_run  # dry_run is guaranteed to be bool here (not None)
+        
+        try:
+            # Prepare the move - use dry_run_value which is definitely bool
+            source, target = self.prepare_move(source_path, dry_run_value)
+            
+            # If source and target are same, file should be skipped
+            if source == target:
+                if self.get_file_category(source_path):
+                    # File has category but was skipped (e.g., conflict strategy = skip)
+                    self.logger.info(f"Skipped: {source_path.name}")
+                else:
+                    # File has no category
+                    self.logger.debug(f"Not moving uncategorized file: {source_path.name}")
+                return False
+            
+            # If dry run, just log
+            if dry_run_value:
+                self.logger.info(f"[DRY RUN] Would move: {source_path.name} → {target.name}")
+                return True
+            
+            # Actually move the file
+            try:
+                shutil.move(str(source), str(target))
+                self.logger.info(f"Moved: {source_path.name} → {target.name}")
+                return True
+                
+            except Exception as e:
+                self.logger.error(f"Failed to move {source_path.name}: {e}")
+                return False
+                
+        except Exception as e:
+            self.logger.error(f"Error processing {source_path.name}: {e}")
+            return False
+        
+
+
+    def sort_directory(self, directory_path: Path, dry_run: Optional[bool] = None) -> Dict[str, Any]:
+        """
+        Sort all files in a directory (recursively).
+        
+        Args:
+            directory_path: Directory to sort
+            dry_run: If True, only simulate. If None, uses config setting.
+            
+        Returns:
+            Dictionary with sorting statistics
+        """
+        if not directory_path.is_dir():
+            raise ValueError(f"Not a directory: {directory_path}")
+        
+        # Use dry_run from config if not specified
+        if dry_run is None:
+            dry_run_value = self.options.get("dry_run", False)
+        else:
+            dry_run_value = dry_run
+        
+        self.logger.info(f"{'[DRY RUN] ' if dry_run_value else ''}Sorting directory: {directory_path}")
+        
+        # Scan directory first
+        categorized_files = self.scan_directory(directory_path)
+        
+        stats: Dict[str, Any] = {
+            "total_files": 0,
+            "moved": 0,
+            "skipped": 0,
+            "errors": 0,
+            "categories": {},
+            "uncategorized": 0
+        }
+        
+        # Sort each file
+        for category, file_list in categorized_files.items():
+            if category == "Uncategorized":
+                stats["uncategorized"] = len(file_list)
+                continue
+            
+            stats["categories"][category] = 0
+            stats["total_files"] += len(file_list)
+            
+            for file_path in file_list:
+                moved = self.sort_file(file_path, dry_run_value)
+                
+                if moved:
+                    stats["moved"] += 1
+                    stats["categories"][category] += 1
+                else:
+                    stats["skipped"] += 1
+        
+        # Log summary
+        summary = (f"Sorting complete. Total: {stats['total_files']}, "
+                  f"Moved: {stats['moved']}, Skipped: {stats['skipped']}, "
+                  f"Errors: {stats['errors']}, Uncategorized: {stats['uncategorized']}")
+        
+        if dry_run_value:
+            self.logger.info(f"[DRY RUN] {summary}")
+        else:
+            self.logger.info(summary)
+        
+        return stats
