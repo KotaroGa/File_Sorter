@@ -10,6 +10,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+### [v0.3.0] - 06.12.2025
+
+#### Added
+- **Core FileSorter class** with complete sorting logic
+- File categorization by extension with configurable categories
+- Conflict resolution strategies: append_number, skip, overwrite
+- Folder structure preservation or flattening option
+- Dry-run mode for previewing changes without moving files
+- Directory scanning and recursive sorting
+- Detailed statistics reporting (moved, skipped, uncategorized)
+- Comprehensive error handling and logging
+- Integration tests for all core functionality
+
+#### Fixed
+- Type hint issues with Optional[bool] parameters
+- Conflict resolution logic in dry-run mode
+- Test assertions for folder structure preservation
+
+---
+
 ### [v0.2.0] - 04.12.2025
 
 #### Added
