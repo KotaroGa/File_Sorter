@@ -164,3 +164,117 @@ class FileSorter:
         self.logger.info(f"Total files found: {total_files}")
 
         return categorized_files
+
+
+
+    def resolve_conflict(self, target_path: Path) -> Path:
+        """
+        Handle file name conflicts based on configuration.
+        
+        Args:
+            target_path: Original target path
+            
+        Returns:
+            New path that doesn't conflict
+            
+        Conflict resolution strategies:
+            - 'append_number': file.txt → file (1).txt → file (2).txt
+            - 'skip': keep original path (caller should handle)
+            - 'overwrite': keep original path (file will be overwritten)
+        """
+        conflict_strategy = self.options.get("conflict_resolution", "append_number")
+        
+        # If file doesn't exist, no conflict
+        if not target_path.exists():
+            return target_path
+        
+        self.logger.debug(f"Conflict detected for {target_path.name}, strategy: {conflict_strategy}")
+        
+        # Handle each strategy
+        if conflict_strategy == "skip":
+            self.logger.info(f"Skipping {target_path.name} (file already exists)")
+            return target_path  # Return original path - caller checks if exists
+        
+        elif conflict_strategy == "overwrite":
+            self.logger.warning(f"Will overwrite {target_path}")
+            return target_path  # Return original path - caller will overwrite
+        
+        elif conflict_strategy == "append_number":
+            # Find a non-conflicting name: file.txt → file (1).txt → file (2).txt
+            counter = 1
+            while True:
+                # Create new filename with number
+                stem = target_path.stem
+                suffix = target_path.suffix
+                
+                # Handle existing numbers in filename
+                if " (" in stem and ")" in stem:
+                    # Remove existing number: "file (1)" → "file"
+                    base_stem = stem.rsplit(" (", 1)[0]
+                else:
+                    base_stem = stem
+                
+                new_name = f"{base_stem} ({counter}){suffix}"
+                new_path = target_path.parent / new_name
+                
+                if not new_path.exists():
+                    self.logger.info(f"Resolved conflict: {target_path.name} → {new_name}")
+                    return new_path
+                
+                counter += 1
+        
+        else:
+            self.logger.error(f"Unknown conflict strategy: {conflict_strategy}")
+            raise ValueError(f"Unknown conflict strategy: {conflict_strategy}")
+
+
+    def prepare_move(self, source_path: Path, dry_run: bool = False) -> Tuple[Path, Path]:
+        """
+        Prepare to move a file: calculate target path and resolve conflicts.
+        
+        Args:
+            source_path: Path to source file
+            dry_run: If True, don't actually move, just calculate
+            
+        Returns:
+            Tuple of (source_path, target_path)
+            If file should be skipped, returns (source_path, source_path)
+            
+        Note:
+            If dry_run is True, only calculates and logs
+        """
+        if not source_path.exists():
+            self.logger.error(f"Source file does not exist: {source_path}")
+            raise FileNotFoundError(f"Source file does not exist: {source_path}")
+        
+        if not source_path.is_file():
+            self.logger.error(f"Source is not a file: {source_path}")
+            raise ValueError(f"Source is not a file: {source_path}")
+        
+        # Get category
+        category = self.get_file_category(source_path)
+        if not category:
+            self.logger.warning(f"No category for {source_path.name}, will not move")
+            return (source_path, source_path)  # Return same path for no move
+        
+        # Calculate target path
+        target_path = self.get_target_path(source_path, category)
+        
+        # Create target directory if needed
+        target_path.parent.mkdir(parents=True, exist_ok=True)
+        
+        # Resolve conflicts
+        final_target_path = self.resolve_conflict(target_path)
+        
+        # Check if we should skip (for both dry_run and actual move)
+        conflict_strategy = self.options.get("conflict_resolution", "append_number")
+        
+        if conflict_strategy == "skip" and target_path.exists():
+            self.logger.info(f"Skipping {source_path.name} (already exists at destination)")
+            return (source_path, source_path)  # Same path means skip
+        
+        # Log the planned move
+        action = "Would move" if dry_run else "Moving"
+        self.logger.info(f"{action}: {source_path.name} → {final_target_path.relative_to(source_path.parent.parent)}")
+        
+        return (source_path, final_target_path)
