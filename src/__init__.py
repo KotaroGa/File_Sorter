@@ -3,7 +3,7 @@
 File Sorter - A smart tool to organize your files automatically.
 """
 
-__version__ = "0.3.0"
+__version__ = "0.4.0"
 __author__ = "KotaroGa"
 
 # Expose main classes at package level
