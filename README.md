@@ -1,134 +1,74 @@
-╔═══════════════════════════════════════════════════════════════╗
-║ ║
-║ ███████╗██╗██╗ ███████╗ ███████╗ ██████╗ ██████╗ ║
-║ ██╔════╝██║██║ ██╔════╝ ██╔════╝██╔════╝██╔═══██╗ ║
-║ █████╗ ██║██║ █████╗ ███████╗██║ ██║ ██║ ║
-║ ██╔══╝ ██║██║ ██╔══╝ ╚════██║██║ ██║ ██║ ║
-║ ██║ ██║███████╗███████╗ ███████║╚██████╗╚██████╔╝ ║
-║ ╚═╝ ╚═╝╚══════╝╚══════╝ ╚══════╝ ╚═════╝ ╚═════╝ ║
-║ ║
-║ "ORGANIZE YOUR DIGITAL REALM" ║
-║ ║
-╚═══════════════════════════════════════════════════════════════╝
+## File Sorter
 
+A powerful, configurable file organization tool that automatically sorts files into categorized directories.
+
+### ✨ Features
+
+- **Smart Categorization**: Automatically detects and sorts files by type
+- **Configurable Rules**: Customize categories and sorting behavior via JSON
+- **Safe Operations**: Dry-run mode to preview changes before execution
+- **Folder Preservation**: Option to preserve original folder structure
+- **Conflict Resolution**: Multiple strategies for handling duplicate files
+- **Comprehensive Logging**: Detailed logs of all operations
+- **CLI Interface**: Easy-to-use command-line interface
+
+### 🚀 Installation
+
+#### From PyPI
 ```bash
-$ file_sorter --status
-[🟢] CORE ENGINE: ACTIVE
-[🟢] CONFIG SYSTEM: LOADED  
-[🟢] CLI INTERFACE: READY
-[🟢] FILE OPERATIONS: STANDBY
-[🟢] LOGGING: ACTIVE
+pip install file-sorter-kotaroga
+```
+---
 
->>> from file_sorter import capabilities
->>> capabilities.features
-{
-    'categorization': ['smart_extension_detection', 'configurable_categories'],
-    'organization': ['preserve_structure', 'flatten_hierarchy', 'conflict_resolution'],
-    'safety': ['dry_run_mode', 'comprehensive_logging', 'undo_tracking'],
-    'automation': ['recursive_sorting', 'batch_processing', 'statistics']
-}
->>> capabilities.current_mode
-'Ready to organize your digital chaos.'
+#### From Source
 
-OPERATION       STATUS          PROGRESS
-FILE_SCAN      ████████░░      80%
-SORTING        ██████████      100%  
-CONFLICT_RES   ████████░░      85%
-LOGGING        █████████░░     90%
+##### Clone the repository
+- git clone https://github.com/KotaroGa/File_Sorter.git
+- cd File_Sorter
 
-╔═══════════════════════════════════════════════════════════════╗
-║                     QUICK START PROTOCOL                      ║
-╚═══════════════════════════════════════════════════════════════╝
+##### Create virtual environment
+- python -m venv venv
+- source venv/bin/activate  # Linux/Mac
+- venv\Scripts\activate  # Windows
 
-## 🚀 INSTALLATION
+##### Install in development mode
+- pip install -e .
 
-```bash
-# Clone the repository
-git clone https://github.com/KotaroGa/File_Sorter.git
-cd File_Sorter
+---
 
-# Activate virtual environment (recommended)
-python -m venv .venv
-source .venv/bin/activate  # Linux/Mac
-# .venv\Scripts\activate   # Windows
+### 📖 Usage
 
-# Install in development mode
-pip install -e .
+##### Show version
+- file-sorter --version
 
+##### Show help
+- file-sorter --help
 
-## 📖 COMMAND REFERENCE
+##### Preview sorting without making changes
+- file-sorter dry-run ~/Downloads
 
-# Get system status
-file-sorter --version
-file-sorter --help
+##### Execute sorting
+- file-sorter sort ~/Downloads
 
-# Scan and analyze (safe mode)
-file-sorter dry-run ~/Downloads
+##### Generate default configuration
+- file-sorter config --generate
 
-# Execute organization protocol
-file-sorter sort ~/Downloads
+##### Show current configuration
+- file-sorter config --show
 
-# Configure the system
-file-sorter config --generate
-file-sorter config --show
+---
 
+### Configuration
+- file-sorter config --generate
 
-## ⚙️ CONFIGURATION SYSTEM
+---
 
-# Generate default config
-file-sorter config --generate
-
-# Customize categories in config.json
-{
-  "categories": {
-    "Digital_Artifacts": [".jpg", ".png", ".gif"],
-    "Data_Scrolls": [".pdf", ".docx", ".txt"],
-    "Code_Glyphs": [".py", ".js", ".html"],
-    "Archive_Crypts": [".zip", ".rar", ".7z"]
-  },
-  "options": {
-    "preserve_folder_structure": true,
-    "conflict_resolution": "append_number",
-    "dry_run": false,
-    "log_level": "INFO"
-  }
-}
-
-
-## 🔧 TECHNICAL SPECIFICATIONS
-
-$ system_info --tool file_sorter
-PROTOCOL        : Python 3.8+
-DEPENDENCIES    : None (Pure Python Standard Library)
-ARCHITECTURE    : Modular with GitFlow
-LICENSE         : MIT
-STATUS          : Production Ready
-VERSION         : 0.4.0
-
-
-## 🎯 FEATURE MATRIX
-
-FEATURE	STATUS	DESCRIPTION
-Smart Categorization	██████████	Automatically detects file types
-Folder Preservation	████████░░	Optional structure preservation
-Conflict Resolution	█████████░	Append, skip, or overwrite
-Dry-Run Mode	        ██████████	Preview changes safely
-Recursive Sorting	██████████	Process nested directories
-Detailed Statistics 	█████████░	Comprehensive operation reports
-Custom Configuration	██████████	JSON-based flexible config
-Colorful CLI	        ██████████	Beautiful terminal interface
-
-
-### 💰 CRYPTO DONATIONS
+#### A HAND
 
 If this tool helps organize your digital realm and you want to support its development:
 
-[🟢] BITCOIN (BTC): bc1qlhup35a64qq0e6uc2v07s64tzjrmj8j9e24jmr
-[🟢] ETHEREUM (ETH): 0x6D4DB084eaC2cF9D4BbF04FdCBd3e737FDD36dcc
-[🟢] SOLANA (SOL): 51ueAbc6TC52UExxTKRZuN6hMPUtu7aoYSKuiWnLSci2
+- [🟢] BITCOIN (BTC): bc1qlhup35a64qq0e6uc2v07s64tzjrmj8j9e24jmr
+- [🟢] ETHEREUM (ETH): 0x6D4DB084eaC2cF9D4BbF04FdCBd3e737FDD36dcc
+- [🟢] SOLANA (SOL): 51ueAbc6TC52UExxTKRZuN6hMPUtu7aoYSKuiWnLSci2
 
-[💡] NOTE: Your support helps maintain and improve this project. All contributions are appreciated! ❤️
-
-╔═══════════════════════════════════════════════════════════════╗
-║ SYSTEM: READY FOR OPERATION ║
-╚═══════════════════════════════════════════════════════════════╝
+>##### [💡] NOTE: Your support helps maintain and improve this project. All contributions are appreciated! ❤️
