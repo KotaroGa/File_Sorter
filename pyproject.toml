@@ -9,7 +9,7 @@ version = "0.4.0"
 description = "A smart tool to automatically organize your files into folders"
 readme = "README.md"
 authors = [
-    {name = "KotaroGa", email = ""},
+    {name = "KotaroGa"},
 ]
 license = {text = "MIT"}
 classifiers = [

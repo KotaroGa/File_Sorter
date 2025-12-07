@@ -128,7 +128,7 @@ class FileSorterCLI:
         parser.add_argument(
             '--version', '-v',
             action='version',
-            version=f'{Colors.highlight("File Sorter")} v0.3.0'
+            version=f'{Colors.highlight("File Sorter")} v0.4.0'
         )
         
         # Subcommands
